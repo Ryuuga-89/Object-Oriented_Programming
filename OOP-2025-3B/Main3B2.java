@@ -1,12 +1,20 @@
 public class Main3B2 {
   public static String buildString() {
     // fill here (without StringBuilder)
-    return null;
+    String s = "";
+    for (int i = 0; i < 20000; i++) {
+      s += "a";
+    }
+    return s;
   }
 
   public static String buildStringByBuilder() {
     // fill here (with StringBuilder)
-    return null;
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < 20000; i++) {
+      sb.append("a");
+    }
+    return sb.toString();
   }
 
   public static String measureString() {

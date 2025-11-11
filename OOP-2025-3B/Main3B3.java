@@ -5,7 +5,7 @@ public class Main3B3 {
   public static void main(String[] args) {
     TaskList list = new TaskList();
     list.addTask(new Task(1, "Do homework"));
-    list.addTask(new Task(2, "Check thesis"));
+    list.addTask(new Task(2, "Check theses"));
     list.addTask(new Task(1, "Rating"));
     list.addTask(new Task(1, "Do homework"));
     list.addTask(new Task(4, "Attend meeting"));
