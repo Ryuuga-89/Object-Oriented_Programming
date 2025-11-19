@@ -39,4 +39,9 @@ public class Number extends Value {
   public Value evaluate() {
     return this;
   }
+
+  @Override
+  public int calcSteps() {
+    return 1;
+  }
 }

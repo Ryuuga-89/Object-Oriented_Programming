@@ -26,4 +26,9 @@ public class Addition extends BinaryOperator {
   public Value evaluate() {
     return new Number(getLeftExpression().evaluate().getNumber() + getRightExpression().evaluate().getNumber());
   }
+
+  @Override
+  public int calcSteps() {
+    return getLeftExpression().calcSteps() + getRightExpression().calcSteps() + 1;
+  }
 }

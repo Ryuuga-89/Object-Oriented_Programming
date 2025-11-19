@@ -48,4 +48,9 @@ public class Bool extends Value {
   public Value evaluate() {
     return this; // Valueクラスに実装した方が早い
   }
+
+  @Override
+  public int calcSteps() {
+    return 1;
+  }
 }
