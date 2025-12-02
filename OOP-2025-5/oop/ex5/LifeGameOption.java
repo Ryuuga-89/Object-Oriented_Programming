@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 // ライフゲームの設定を格納するクラス
-public class Option {
+public class LifeGameOption {
     private String world;
     private int size;
     private Set<Integer> ruleB;
@@ -106,7 +106,7 @@ public class Option {
 
     // コンストラクタの全引数は文字列で受け取る。
     // デフォルト設定を用いるときは"Default"を渡す。
-    public Option(String world, String size, String rule, String neighborhood, String wrap) {
+    public LifeGameOption(String world, String size, String rule, String neighborhood, String wrap) {
         setWorld(world); // worldは必ず最初に設定する
         setSize(size);
         setRule(rule);

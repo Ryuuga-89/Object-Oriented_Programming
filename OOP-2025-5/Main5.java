@@ -2,32 +2,45 @@ import oop.ex5.*;
 
 import java.io.*;
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class Main5 {
     public static void main(String[] args) {
         try {
+            // コマンドライン引数の解析
             Map<String,String> cli = Util.parseArgs(args);
             String in   = cli.get("--pattern");
             String stepsS = cli.get("--steps");
             String out  = cli.get("--dump-final");
             if (in == null || stepsS == null || out == null) usage("Missing: --pattern --steps --dump-final");
 
-            File inFile = new File(in);
-            if (!inFile.exists() || !inFile.canRead()) fail("Cannot read input file: " + in);
+            // パターンファイルの読み取り(この時点ではヘッダーのみ)
+            Map<String, String> pattern = new HashMap<>();
+            try (BufferedReader br = new BufferedReader(new FileReader(in))) {
 
-            FileReader fileReader = new FileReader(inFile);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
+                // ヘッダーの読み取り
+                while (true) {
+                    String line = br.readLine();
+                    if (line == "") break; // 空行(ヘッダー終了)で終了
+                    pattern.put(line.split(":")[0].trim().toLowerCase(), line.split(":")[1].trim());
+                }
 
-            Map<String, String> opt = new HashMap<>(); // 設定格納用
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-            
+            // オプションの解析
+            RawOption rawOption = new RawOption();
+            rawOption.margeOption(pattern);
+            rawOption.margeOption(cli);
 
-
-            opt = Util.parseArgs(args);
-
-
-
+            // オプションの決定
+            LifeGameOption option = new LifeGameOption(
+                    rawOption.getWorld(),
+                    rawOption.getSize(),
+                    rawOption.getRule(),
+                    rawOption.getNeighborhood(),
+                    rawOption.getWrap()
+            );
 
         } catch (Throwable t) {
             fail(t.getMessage() == null ? t.toString() : t.getMessage());

@@ -25,4 +25,7 @@ public class AppConfig {
         put("WORLD_3D", "FACES6");
     }};
     public static final boolean DEFAULT_WRAP = false;
+
+    // インスタンス化禁止のためにコンストラクタをprivateにする
+    private AppConfig() {}
 }
