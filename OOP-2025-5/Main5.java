@@ -20,8 +20,8 @@ public class Main5 {
                 // ヘッダーの読み取り
                 while (true) {
                     String line = br.readLine();
-                    if (line == "") break; // 空行(ヘッダー終了)で終了
-                    pattern.put(line.split(":")[0].trim().toLowerCase(), line.split(":")[1].trim());
+                    if (line == null || line.trim().isEmpty()) break; // 空行(ヘッダー終了)で終了
+                    pattern.put("--" + line.split(":")[0].trim().toLowerCase(), line.split(":")[1].trim());
                 }
 
             } catch (IOException e) {
@@ -30,8 +30,8 @@ public class Main5 {
 
             // オプションの解析
             RawOption rawOption = new RawOption();
-            rawOption.margeOption(pattern);
-            rawOption.margeOption(cli);
+            rawOption.mergeOption(pattern);
+            rawOption.mergeOption(cli);
 
             // オプションの決定
             LifeGameOption option = new LifeGameOption(

@@ -10,7 +10,7 @@ public class RawOption {
     private String neighborhood = "Default";
     private String wrap = "Default";
 
-    public void margeOption(Map<String, String> map) {
+    public void mergeOption(Map<String, String> map) {
         if (map.containsKey("--world")) {
             this.world = map.get("--world");
         }
