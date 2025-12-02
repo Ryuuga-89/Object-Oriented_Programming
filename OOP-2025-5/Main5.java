@@ -2,6 +2,7 @@ import oop.ex5.*;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class Main5 {
     public static void main(String[] args) {
@@ -12,7 +13,21 @@ public class Main5 {
             String out  = cli.get("--dump-final");
             if (in == null || stepsS == null || out == null) usage("Missing: --pattern --steps --dump-final");
 
-            // TODO
+            File inFile = new File(in);
+            if (!inFile.exists() || !inFile.canRead()) fail("Cannot read input file: " + in);
+
+            FileReader fileReader = new FileReader(inFile);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+            Map<String, String> opt = new HashMap<>(); // 設定格納用
+
+            
+
+
+            opt = Util.parseArgs(args);
+
+
+
 
         } catch (Throwable t) {
             fail(t.getMessage() == null ? t.toString() : t.getMessage());
