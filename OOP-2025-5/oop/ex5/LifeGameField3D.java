@@ -7,7 +7,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.util.stream.Collectors;
 
 public class LifeGameField3D extends LifeGameField {
     public LifeGameField3D(LifeGameOption option) {
@@ -52,53 +51,17 @@ public class LifeGameField3D extends LifeGameField {
     @Override
     public LifeGameField readField(String patternFilePath) {
         int size = option.getSize();
-
         try (BufferedReader br = new BufferedReader(new FileReader(patternFilePath))) {
-            String line;
-
             // ヘッダー部分をスキップ
-            while ((line = br.readLine()) != null) {
-                if (line.trim().isEmpty()) {
-                    break;
-                }
-            }
+            skipHeader(br);
 
-            // 本体部分の読み込み (Z -> Y -> X)
+            // 本体部分の読み込み
             for (int z = 0; z < size; z++) {
-                for (int y = 0; y < size; y++) {
-                    line = br.readLine();
-
-                    while (line != null && (line.trim().isEmpty() || line.trim().startsWith("#"))) {
-                        line = br.readLine();
-                    }
-
-                    // ファイル終端チェック
-                    if (line == null) {
-                        throw new IllegalArgumentException("Pattern file body is shorter than expected for 3D world of size: " + size);
-                    }
-
-                    // 行の長さチェック
-                    if (line.length() != size) {
-                        throw new IllegalArgumentException("Invalid line length at (z=" + z + ", y=" + y + "). Expected " + size + " but got " + line.length());
-                    }
-
-                    for (int x = 0; x < size; x++) {
-                        char c = line.charAt(x);
-                        if (c == 'O') {
-                            setCell(x, y, z, true);
-                        } else if (c == '.') {
-                            setCell(x, y, z, false);
-                        } else {
-                            throw new IllegalArgumentException("Invalid character '" + c + "' at (" + x + ", " + y + ", " + z + ")");
-                        }
-                    }
-                }
+                read2DLayer(br, z);
             }
-
         } catch (IOException e) {
             throw new RuntimeException("Failed to read pattern file: " + patternFilePath, e);
         }
-
         return this;
     }
 
@@ -113,28 +76,13 @@ public class LifeGameField3D extends LifeGameField {
             }
 
             // ヘッダーの書き出し
-            writer.println("WORLD: " + option.getWorld());
-            writer.println("SIZE: " + option.getSize());
-
-            String ruleB = option.getRuleB().stream().sorted().map(String::valueOf).collect(Collectors.joining());
-            String ruleS = option.getRuleS().stream().sorted().map(String::valueOf).collect(Collectors.joining());
-            writer.println("RULE: B" + ruleB + "/S" + ruleS);
-
-            writer.println("NEIGHBORHOOD: " + option.getNeighborhood());
-            writer.println("WRAP: " + option.getWrap());
-            writer.println();
+            writeHeader(writer);
 
             // 本体の書き出し
             int size = option.getSize();
             for (int z = 0; z < size; z++) {
-                for (int y = 0; y < size; y++) {
-                    for (int x = 0; x < size; x++) {
-                        writer.print(getCell(x, y, z) ? 'O' : '.');
-                    }
-                    writer.println();
-                }
+                write2DLayer(writer, z);
 
-                // 区切り
                 if (z < size - 1) {
                     writer.println();
                 }

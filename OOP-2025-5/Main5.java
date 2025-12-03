@@ -11,34 +11,40 @@ public class Main5 {
             String in   = cli.get("--pattern");
             String stepsS = cli.get("--steps");
             String out  = cli.get("--dump-final");
-            if (in == null || stepsS == null || out == null) usage("Missing: --pattern --steps --dump-final");
+            String randomS = cli.get("--random");
+            
+            if (stepsS == null || out == null) usage("Missing: --steps or --dump-final");
+            if (in == null && randomS == null) usage("Missing: --pattern or --random");
 
-            // パターンファイルの読み取り(この時点ではヘッダーのみ)
-            Map<String, String> pattern = new HashMap<>();
-            try (BufferedReader br = new BufferedReader(new FileReader(in))) {
+            // オプション解析用
+            RawOption rawOption = new RawOption();
 
-                // ヘッダーの読み取り
-                while (true) {
-                    String line = br.readLine();
-                    if (line == null || line.trim().isEmpty()) break; // 空行(ヘッダー終了)で終了
+            // パターンファイルが指定されている場合、ヘッダーを読み込んでデフォルト設定とする
+            // (randomが指定されていても、ワールド設定などをファイルから借りる使い方も許容する)
+            if (in != null) {
+                Map<String, String> pattern = new HashMap<>();
+                try (BufferedReader br = new BufferedReader(new FileReader(in))) {
+                    // ヘッダーの読み取り
+                    while (true) {
+                        String line = br.readLine();
+                        if (line == null || line.trim().isEmpty()) break; // 空行(ヘッダー終了)で終了
 
-                    if (line.trim().startsWith("#")) {
-                        continue;
+                        if (line.trim().startsWith("#")) {
+                            continue;
+                        }
+
+                        String[] parts = line.split(":");
+                        if (parts.length == 2) {
+                            pattern.put("--" + parts[0].trim().toLowerCase(), parts[1].trim());
+                        }
                     }
-
-                    String[] parts = line.split(":");
-                    if (parts.length == 2) {
-                        pattern.put("--" + parts[0].trim().toLowerCase(), parts[1].trim());
-                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-
-            } catch (IOException e) {
-                e.printStackTrace();
+                rawOption.mergeOption(pattern);
             }
 
-            // オプションの解析
-            RawOption rawOption = new RawOption();
-            rawOption.mergeOption(pattern);
+            // コマンドライン引数で指定されたオプションをマージ
             rawOption.mergeOption(cli);
 
             // オプションの決定
@@ -60,8 +66,19 @@ public class Main5 {
                 field = new LifeGameField3D(option);
             }
 
-            // 初期化盤面の読み込み
-            field.readField(in);
+            // 初期化処理の分岐
+            if (randomS != null) {
+                // ランダム初期化
+                try {
+                    double density = Double.parseDouble(randomS);
+                    field.randomize(density);
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Random density must be a number: " + randomS);
+                }
+            } else {
+                // パターンファイルから読み込み
+                field.readField(in);
+            }
             
             LifeGame lifeGame = new LifeGame(option, field);
             lifeGame.run(Integer.parseInt(stepsS));
@@ -77,7 +94,7 @@ public class Main5 {
 
     private static void usage(String msg) {
         System.err.println(msg);
-        System.err.println("Usage: java Main5 --pattern <input.pattern> --steps <N> --dump-final <output.pattern> "
+        System.err.println("Usage: java Main5 [--pattern <input.pattern>] [--random <density>] --steps <N> --dump-final <output.pattern> "
                 + "[--rule B3/S23] [--neighborhood MOORE8|VONN4|HEX6|FACES6] [--world WORLD_2D|WORLD_HEX|WORLD_3D] [--size N] [--wrap true|false]");
         System.exit(2);
     }

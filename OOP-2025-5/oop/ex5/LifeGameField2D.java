@@ -7,7 +7,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.util.stream.Collectors;
 
 // WORLD_2D用のライフゲームの盤面クラス
 public class LifeGameField2D extends LifeGameField {
@@ -58,52 +57,12 @@ public class LifeGameField2D extends LifeGameField {
 
     @Override
     public LifeGameField readField(String patternFilePath) {
-        int size = option.getSize();
-        
         try (BufferedReader br = new BufferedReader(new FileReader(patternFilePath))) {
-            String line;
-            
-            // ヘッダー部分をスキップ（最初の空行まで読み飛ばす）
-            while ((line = br.readLine()) != null) {
-                if (line.trim().isEmpty()) {
-                    break;
-                }
-            }
-
-            // 本体部分の読み込み
-            for (int y = 0; y < size; y++) {
-                line = br.readLine();
-                
-                // ファイル終端チェック
-                if (line == null) {
-                    throw new IllegalArgumentException("Pattern file body is shorter than SIZE: " + size);
-                }
-
-                while (line != null && (line.trim().isEmpty() || line.trim().startsWith("#"))) {
-                    line = br.readLine();
-                }
-
-                // バリデーション: 行の長さチェック
-                if (line.length() != size) {
-                    throw new IllegalArgumentException("Invalid line length at line " + (y + 1) + ". Expected " + size + " but got " + line.length());
-                }
-
-                for (int x = 0; x < size; x++) {
-                    char c = line.charAt(x);
-                    if (c == 'O') {
-                        setCell(x, y, 0, true);
-                    } else if (c == '.') {
-                        setCell(x, y, 0, false);
-                    } else {
-                        throw new IllegalArgumentException("Invalid character '" + c + "' at (" + x + ", " + y + ")");
-                    }
-                }
-            }
-            
+            skipHeader(br);
+            read2DLayer(br, 0);
         } catch (IOException e) {
             throw new RuntimeException("Failed to read pattern file: " + patternFilePath, e);
         }
-        
         return this;
     }
 
@@ -118,33 +77,16 @@ public class LifeGameField2D extends LifeGameField {
             }
 
             // ヘッダーの書き出し
-            writer.println("WORLD: " + option.getWorld());
-            writer.println("SIZE: " + option.getSize());
-
-            // ルール文字列の再構築
-            String ruleB = option.getRuleB().stream().sorted().map(String::valueOf).collect(Collectors.joining());
-            String ruleS = option.getRuleS().stream().sorted().map(String::valueOf).collect(Collectors.joining());
-            writer.println("RULE: B" + ruleB + "/S" + ruleS);
-
-            writer.println("NEIGHBORHOOD: " + option.getNeighborhood());
-            writer.println("WRAP: " + option.getWrap());
-            writer.println(); // ヘッダーと本体の区切り
-
+            writeHeader(writer);
             // 本体の書き出し
-            int size = option.getSize();
-            for (int y = 0; y < size; y++) {
-                for (int x = 0; x < size; x++) {
-                    writer.print(getCell(x, y, 0) ? 'O' : '.');
-                }
-                writer.println();
-            }
+            write2DLayer(writer, 0);
 
             writer.flush();
 
         } catch (IOException e) {
             throw new RuntimeException("Failed to write field to: " + outputFilePath, e);
         } finally {
-            // ファイル出力の場合のみ閉じる（標準出力を閉じると以降の出力ができなくなるため）
+            // ファイル出力の場合のみ閉じる
             if (writer != null && !outputFilePath.equals("-")) {
                 writer.close();
             }
