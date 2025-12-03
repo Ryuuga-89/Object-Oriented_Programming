@@ -42,6 +42,10 @@ public class Main5 {
                     rawOption.getWrap()
             );
 
+            // 初期状態の読み取り
+            
+
+
         } catch (Throwable t) {
             fail(t.getMessage() == null ? t.toString() : t.getMessage());
         }
