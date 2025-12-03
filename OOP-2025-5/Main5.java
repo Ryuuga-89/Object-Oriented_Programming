@@ -21,7 +21,15 @@ public class Main5 {
                 while (true) {
                     String line = br.readLine();
                     if (line == null || line.trim().isEmpty()) break; // 空行(ヘッダー終了)で終了
-                    pattern.put("--" + line.split(":")[0].trim().toLowerCase(), line.split(":")[1].trim());
+
+                    if (line.trim().startsWith("#")) {
+                        continue;
+                    }
+
+                    String[] parts = line.split(":");
+                    if (parts.length == 2) {
+                        pattern.put("--" + parts[0].trim().toLowerCase(), parts[1].trim());
+                    }
                 }
 
             } catch (IOException e) {

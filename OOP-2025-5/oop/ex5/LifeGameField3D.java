@@ -68,9 +68,7 @@ public class LifeGameField3D extends LifeGameField {
                 for (int y = 0; y < size; y++) {
                     line = br.readLine();
 
-                    // 層間の空行などをスキップ（データ行が現れるまで空行を読み飛ばす）
-                    // 層間の空行や余分な空行に対応するため、空行なら次を読む
-                    while (line != null && line.trim().isEmpty()) {
+                    while (line != null && (line.trim().isEmpty() || line.trim().startsWith("#"))) {
                         line = br.readLine();
                     }
 

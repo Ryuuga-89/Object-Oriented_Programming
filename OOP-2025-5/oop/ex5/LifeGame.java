@@ -14,7 +14,7 @@ public class LifeGame {
     }
 
     public void run(int generationsCount) {
-        for (int i = 1; i < generationsCount; i++) {
+        for (int i = 1; i <= generationsCount; i++) {
             LifeGameField nextGen = generations.get(i - 1).nextGeneration();
             generations.add(nextGen);
         }

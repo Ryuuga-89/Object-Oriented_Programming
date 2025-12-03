@@ -79,6 +79,10 @@ public class LifeGameField2D extends LifeGameField {
                     throw new IllegalArgumentException("Pattern file body is shorter than SIZE: " + size);
                 }
 
+                while (line != null && (line.trim().isEmpty() || line.trim().startsWith("#"))) {
+                    line = br.readLine();
+                }
+
                 // バリデーション: 行の長さチェック
                 if (line.length() != size) {
                     throw new IllegalArgumentException("Invalid line length at line " + (y + 1) + ". Expected " + size + " but got " + line.length());

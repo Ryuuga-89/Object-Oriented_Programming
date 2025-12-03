@@ -21,12 +21,12 @@ public abstract class LifeGameField {
     public LifeGameField(LifeGameOption option) {
         this.option = option;
         int size = option.getSize();
-        if (option.getWorld() == AppConfig.WORLD_2D || option.getWorld() == AppConfig.WORLD_HEX) {
+        if (option.getWorld().equals(AppConfig.WORLD_2D) || option.getWorld().equals(AppConfig.WORLD_HEX)) {
             field = new boolean[size][size][1];
-        } else if (option.getWorld() == AppConfig.WORLD_3D) {
+        } else if (option.getWorld().equals(AppConfig.WORLD_3D)) {
             field = new boolean[size][size][size];
         } else {
-            throw new IllegalArgumentException("Unsupported world type");
+            throw new IllegalArgumentException("Unsupported world type" + option.getWorld());
         }
     }
 
