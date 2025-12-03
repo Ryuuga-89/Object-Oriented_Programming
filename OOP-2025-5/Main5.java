@@ -51,11 +51,13 @@ public class Main5 {
         }
     }
 
+
     private static void usage(String msg) {
         System.err.println(msg);
         System.err.println("Usage: java Main5 --pattern <input.pattern> --steps <N> --dump-final <output.pattern> "
                 + "[--rule B3/S23] [--neighborhood MOORE8|VONN4|HEX6|FACES6] [--world WORLD_2D|WORLD_HEX|WORLD_3D] [--size N] [--wrap true|false]");
         System.exit(2);
     }
+    
     private static void fail(String msg){ System.err.println("Error: " + msg); System.exit(1); }
 }
