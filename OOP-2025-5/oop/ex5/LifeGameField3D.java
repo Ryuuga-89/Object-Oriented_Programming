@@ -1,8 +1,13 @@
 package oop.ex5;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.stream.Collectors;
 
 public class LifeGameField3D extends LifeGameField {
     public LifeGameField3D(LifeGameOption option) {
@@ -97,5 +102,54 @@ public class LifeGameField3D extends LifeGameField {
         }
 
         return this;
+    }
+
+    @Override
+    public void writeField(String outputFilePath) {
+        PrintWriter writer = null;
+        try {
+            if (outputFilePath.equals("-")) {
+                writer = new PrintWriter(new OutputStreamWriter(System.out));
+            } else {
+                writer = new PrintWriter(new BufferedWriter(new FileWriter(outputFilePath)));
+            }
+
+            // ヘッダーの書き出し
+            writer.println("WORLD: " + option.getWorld());
+            writer.println("SIZE: " + option.getSize());
+
+            String ruleB = option.getRuleB().stream().sorted().map(String::valueOf).collect(Collectors.joining());
+            String ruleS = option.getRuleS().stream().sorted().map(String::valueOf).collect(Collectors.joining());
+            writer.println("RULE: B" + ruleB + "/S" + ruleS);
+
+            writer.println("NEIGHBORHOOD: " + option.getNeighborhood());
+            writer.println("WRAP: " + option.getWrap());
+            writer.println();
+
+            // 本体の書き出し
+            int size = option.getSize();
+            for (int z = 0; z < size; z++) {
+                for (int y = 0; y < size; y++) {
+                    for (int x = 0; x < size; x++) {
+                        writer.print(getCell(x, y, z) ? 'O' : '.');
+                    }
+                    writer.println();
+                }
+
+                // 区切り
+                if (z < size - 1) {
+                    writer.println();
+                }
+            }
+
+            writer.flush();
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to write field to: " + outputFilePath, e);
+        } finally {
+            if (writer != null && !outputFilePath.equals("-")) {
+                writer.close();
+            }
+        }
     }
 }

@@ -59,6 +59,7 @@ public class Main5 {
             lifeGame.run(Integer.parseInt(stepsS));
 
             // 最終盤面の出力
+            lifeGame.getGeneration(Integer.parseInt(stepsS)).writeField(out);
 
         } catch (Throwable t) {
             fail(t.getMessage() == null ? t.toString() : t.getMessage());
