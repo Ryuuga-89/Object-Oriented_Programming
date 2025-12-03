@@ -42,9 +42,23 @@ public class Main5 {
                     rawOption.getWrap()
             );
 
-            // 初期状態の読み取り
-            
+            // ワールドタイプから盤面オブジェクトを生成
+            LifeGameField field;
+            if (option.getWorld().equals(AppConfig.WORLD_2D)) {
+                field = new LifeGameField2D(option);
+            } else if (option.getWorld().equals(AppConfig.WORLD_HEX)) {
+                field = new LifeGameFieldHEX(option);
+            } else {
+                field = new LifeGameField3D(option);
+            }
 
+            // 初期化盤面の読み込み
+            field.readField(in);
+            
+            LifeGame lifeGame = new LifeGame(option, field);
+            lifeGame.run(Integer.parseInt(stepsS));
+
+            // 最終盤面の出力
 
         } catch (Throwable t) {
             fail(t.getMessage() == null ? t.toString() : t.getMessage());
@@ -58,6 +72,6 @@ public class Main5 {
                 + "[--rule B3/S23] [--neighborhood MOORE8|VONN4|HEX6|FACES6] [--world WORLD_2D|WORLD_HEX|WORLD_3D] [--size N] [--wrap true|false]");
         System.exit(2);
     }
-    
+
     private static void fail(String msg){ System.err.println("Error: " + msg); System.exit(1); }
 }

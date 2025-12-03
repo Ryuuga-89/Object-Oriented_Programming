@@ -13,7 +13,7 @@ public class LifeGame {
         this.generations.add(firstGeneration);
     }
 
-    public void allRun(int generationsCount) {
+    public void run(int generationsCount) {
         for (int i = 1; i < generationsCount; i++) {
             LifeGameField nextGen = generations.get(i - 1).nextGeneration();
             generations.add(nextGen);
@@ -22,6 +22,10 @@ public class LifeGame {
 
     public List<LifeGameField> getGenerations() {
         return generations;
+    }
+
+    public LifeGameField getGeneration(int index) {
+        return generations.get(index);
     }
 
     public LifeGameOption getOption() {

@@ -1,5 +1,9 @@
 package oop.ex5;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
 // WORLD_HEX用のライフゲームの盤面クラス
 public class LifeGameFieldHEX extends LifeGameField {
     public LifeGameFieldHEX(LifeGameOption option) {
@@ -39,5 +43,52 @@ public class LifeGameFieldHEX extends LifeGameField {
         }
 
         return applyRule(x, y, z, aliveNeighbors);
+    }
+
+    @Override
+    public LifeGameField readField(String patternFilePath) {
+        int size = option.getSize();
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(patternFilePath))) {
+            String line;
+            
+            // ヘッダー部分をスキップ（最初の空行まで読み飛ばす）
+            while ((line = br.readLine()) != null) {
+                if (line.trim().isEmpty()) {
+                    break;
+                }
+            }
+
+            // 本体部分の読み込み
+            for (int y = 0; y < size; y++) {
+                line = br.readLine();
+                
+                // ファイル終端チェック
+                if (line == null) {
+                    throw new IllegalArgumentException("Pattern file body is shorter than SIZE: " + size);
+                }
+
+                // バリデーション: 行の長さチェック
+                if (line.length() != size) {
+                    throw new IllegalArgumentException("Invalid line length at line " + (y + 1) + ". Expected " + size + " but got " + line.length());
+                }
+
+                for (int x = 0; x < size; x++) {
+                    char c = line.charAt(x);
+                    if (c == 'O') {
+                        setCell(x, y, 0, true);
+                    } else if (c == '.') {
+                        setCell(x, y, 0, false);
+                    } else {
+                        throw new IllegalArgumentException("Invalid character '" + c + "' at (" + x + ", " + y + ")");
+                    }
+                }
+            }
+            
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read pattern file: " + patternFilePath, e);
+        }
+        
+        return this;
     }
 }

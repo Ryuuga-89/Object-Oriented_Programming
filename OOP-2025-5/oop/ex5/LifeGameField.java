@@ -68,5 +68,6 @@ public abstract class LifeGameField {
 
     abstract public LifeGameField nextGeneration(); // 次の盤面を決定するメソッド
     abstract protected boolean isCellAliveInNextGen(int x, int y, int z); // 指定したセルが次世代で生きているかを判定するヘルパーメソッド
-    abstract public LifeGameField readField(); // 盤面をファイルから読み取るメソッド
+    abstract public LifeGameField readField(String patternFilePath); // 盤面をファイルから読み取るメソッド
+    abstract public void writeField(String outputFilePath); // 盤面をファイル(または標準出力)に書き出すメソッド
 }
